@@ -1,0 +1,44 @@
+# Customize the appearance of the guis
+guis:
+  marketplace:
+    window name: "Marketplace"
+    structure:
+      - "1 1 1 1 1 1 1 1 1"
+      - "1 . . . . . . . 1"
+      - "1 . . . . . . . 1"
+      - "1 . . . . . . . 1"
+      - "1 . . . . . . . 1"
+      - "1 1 1 1 1 1 1 1 1"
+    ingredients:
+      '1':
+        name:
+
+# Messages used in-game
+messages:
+  commands:
+    insufficient permissions: "&cYou do not have permission to use this!"
+    requires player: "&cOnly players can use this!"
+
+    sell:
+      description: "Add your current held item to the marketplace."
+      success: "&2Your item &e[{name}&7x&e{amount}] &2has been listed on the market!"
+      failure:
+        invalid item: "&cThis item cannot be sold!"
+
+    marketplace:
+      description: "View the marketplace."
+      success: "&2Opening marketplace...!"
+
+    blackmarket:
+      description: "View the hidden underbelly of the marketplace... With dirt cheap prices!"
+      success: "&7Opening marketplace...!"
+
+    transactions:
+      description: "View a player's transaction history."
+      success:
+        transaction_line: "  &7- &2{material}x{amount} sold for {amount}"
+        full_format: |
+          =-=-=-=-=-=-=-=-=-=-=-=-=-=
+          &e&n{player}'s History:
+          {transaction_lines}
+          =-=-=-=-=-=-=-=-=-=-=-=-=-=
