@@ -25,6 +25,15 @@ public class ItemConfig {
     @YamlConfig.YamlKey(value = "enchanted-effect", required = false)
     private boolean hasEnchantedEffect = false;
 
+    @YamlConfig.YamlKey(value = "modeldata", required = false)
+    private int modeldata = 0;
+
+    /*
+    Used to store extra information
+     */
+    @YamlConfig.YamlKey(value = "tag", required = false)
+    private String tag;
+
     // Default constructor
     public ItemConfig() {
 
@@ -64,8 +73,16 @@ public class ItemConfig {
             ItemUtils.applyEnchantedEffect(itemStack);
         }
 
+        if(modeldata != 0) {
+            itemStack.editMeta(meta -> meta.setCustomModelData(modeldata));
+        }
+
         return itemStack;
 
+    }
+
+    public String getTag() {
+        return tag;
     }
 
     public Material getItem() {
@@ -120,10 +137,6 @@ public class ItemConfig {
     @Override
     public int hashCode() {
         return Objects.hash(type, count, name, lore);
-    }
-
-    public static ItemConfig load(YamlConfig section) {
-        return YamlConfig.loadFromYaml(new ItemConfig(), section);
     }
 
     public ItemConfig copy() {

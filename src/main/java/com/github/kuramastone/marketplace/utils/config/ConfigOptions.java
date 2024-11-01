@@ -2,6 +2,7 @@ package com.github.kuramastone.marketplace.utils.config;
 
 import com.github.kuramastone.bUtilities.ComponentEditor;
 import com.github.kuramastone.bUtilities.YamlConfig;
+import com.github.kuramastone.marketplace.MarketplaceAPI;
 import com.github.kuramastone.marketplace.utils.GuiManager;
 
 import java.util.HashMap;
@@ -14,17 +15,17 @@ public class ConfigOptions {
      * Easy access to formatted messages from the config by their key
      */
     public Map<String, ComponentEditor> messages;
-    public GuiManager guiManager;
+    public List<String> marketplaceItemHeaders;
+    public double blackMarketDiscount;
+    public double blackMarketUseRate;
 
-    public void loadConfig(YamlConfig config) {
-        guiManager = new GuiManager();
-
+    public void loadConfig(MarketplaceAPI api, YamlConfig config) {
         loadMessages(config);
-        loadMisc(config);
-        guiManager.load(config);
-    }
 
-    private void loadMisc(YamlConfig config) {
+        marketplaceItemHeaders = config.getStringList("Markets.items.header lore");
+
+        blackMarketDiscount = config.getDouble("Markets.blackmarket.discount percentage") / 100.0D;
+        blackMarketUseRate = config.getDouble("Markets.blackmarket.chance to use in blackmarket") / 100.0D;
     }
 
     /**
@@ -32,7 +33,6 @@ public class ConfigOptions {
      */
     public void loadMessages(YamlConfig config) {
         messages = new HashMap<>();
-        config.installNewKeysFromDefault("messages", true);
 
         for (String subkey : config.getKeys("messages", true)) {
             String key = "messages." + subkey;

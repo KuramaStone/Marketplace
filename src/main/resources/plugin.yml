@@ -1,4 +1,12 @@
 name: Marketplace
-version: '1.0.0'
+version: ${version}
 main: com.github.kuramastone.marketplace.Marketplace
 api-version: '1.20'
+
+commands:
+  marketplace:
+    description: Open the marketplace
+  blackmarket:
+    description: Open the blackmarket
+  sell:
+    description: Sell your currently held item.

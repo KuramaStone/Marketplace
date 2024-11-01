@@ -74,10 +74,15 @@ public abstract class SubCommand<T extends SimpleAPI> {
     }
 
     public void register(JavaPlugin plugin) {
-        PluginCommand cmd = plugin.getCommand(subcommand);
-        Objects.requireNonNull(cmd, String.format("This subcommand '%s' has not been registered in the plugin.yml!", subcommand));
-        cmd.setExecutor((sender, command, label, args) -> execute(sender, args));
-        cmd.setTabCompleter((sender, command, label, args) -> tabComplete(sender, args));
+        try {
+            PluginCommand cmd = plugin.getCommand(subcommand);
+            Objects.requireNonNull(cmd, String.format("This subcommand '%s' has not been registered in the plugin.yml!", subcommand));
+            cmd.setExecutor((sender, command, label, args) -> execute(sender, args));
+            cmd.setTabCompleter((sender, command, label, args) -> tabComplete(sender, args));
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public Double parseDouble(CommandSender sender, String arg) {

@@ -1,7 +1,38 @@
+Markets:
+  blackmarket:
+    discount percentage: 50
+    chance to use in blackmarket: 25
+  items:
+    header lore:
+      - "&e&l${amount}"
+      - "&eClick to purchase!"
+      - " "
+
 # Customize the appearance of the guis
 guis:
   marketplace:
-    window name: "Marketplace"
+    window name: "&2&lMarketplace"
+    structure:
+      - "1 1 1 1 1 1 1 1 1"
+      - "1 . . . . . . . 1"
+      - "1 . . . . . . . 1"
+      - "1 . . . . . . . 1"
+      - "1 . . . . . . . 1"
+      - "< 1 1 1 1 1 1 1 >"
+    ingredients:
+      '1':
+        name: " "
+        material: BLACK_STAINED_GLASS_PANE
+      '<':
+        tag: "BACK"
+        name: "&cPrevious Page"
+        material: REDSTONE_BLOCK
+      '>':
+        tag: "NEXT"
+        name: "&cNext Page"
+        material: EMERALD_BLOCK
+  blackmarket:
+    window name: "&7&lBlackmarket"
     structure:
       - "1 1 1 1 1 1 1 1 1"
       - "1 . . . . . . . 1"
@@ -11,7 +42,30 @@ guis:
       - "1 1 1 1 1 1 1 1 1"
     ingredients:
       '1':
-        name:
+        name: " "
+        material: BLACK_STAINED_GLASS_PANE
+  confirmation:
+    window name: "&cClick To Confirm"
+    structure:
+      - "1 1 1 1 1 1 1 1 1"
+      - "1 . A . I . D . 1"
+      - "1 1 1 1 1 1 1 1 1"
+    ingredients:
+      '1':
+        name: " "
+        material: BLACK_STAINED_GLASS_PANE
+      'I':
+        tag: "ITEM_TO_CONFIRM" # Tag states that it will revert to the item they are buying
+        name: "&2Loading Item..."
+        material: "GREEN_STAINED_GLASS_PANE"
+      'A':
+        tag: "ACCEPT" # Tag states that it will accept the transaction
+        name: "&2Confirm"
+        material: "GREEN_STAINED_GLASS_PANE"
+      'D':
+        tag: "DENY" # Tag states that it will deny the transaction
+        name: "&cDeny"
+        material: "RED_STAINED_GLASS_PANE"
 
 # Messages used in-game
 messages:
@@ -24,6 +78,7 @@ messages:
       success: "&2Your item &e[{name}&7x&e{amount}] &2has been listed on the market!"
       failure:
         invalid item: "&cThis item cannot be sold!"
+        invalid price: "&cPrice of ${amount} is not permitted!"
 
     marketplace:
       description: "View the marketplace."

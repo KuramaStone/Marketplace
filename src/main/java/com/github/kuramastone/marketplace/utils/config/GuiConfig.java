@@ -32,6 +32,10 @@ public class GuiConfig {
         return structure.toArray(new String[0]);
     }
 
+    /**
+     * Returns the number of 'context' characters per page
+     * @return
+     */
     public int contentItemsPerPage() {
         int total = 0;
 

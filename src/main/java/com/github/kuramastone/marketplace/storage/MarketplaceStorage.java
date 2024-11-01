@@ -27,15 +27,6 @@ public class MarketplaceStorage {
     }
 
     /**
-     * @return The item's price after applying the discount
-     */
-    public double getPrice(ItemEntry itemEntry) {
-        double original = itemEntry.getOriginalPrice();
-
-        return original - (original * currentDiscount);
-    }
-
-    /**
      * @return Returns a copy of the {@link Set} of items in the marketplace
      */
     public Set<ItemEntry> getItemEntries() {
@@ -49,4 +40,15 @@ public class MarketplaceStorage {
         return currentDiscount;
     }
 
+    public void setEntries(Set<ItemEntry> entries) {
+        this.itemEntries = entries;
+    }
+
+    /**
+     * Removes items not in this set
+     * @param itemEntries
+     */
+    public void filter(Set<ItemEntry> itemEntries) {
+        this.itemEntries = new HashSet<>(this.itemEntries.stream().filter(itemEntries::contains).toList());
+    }
 }

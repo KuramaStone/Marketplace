@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 /**
  * Custom yaml manager used by KuramaStone across many platforms.
  */
-@SuppressWarnings("unchecked") // i am checking actually
+@SuppressWarnings("unchecked") // i am checking actually, but intellij doesnt realize
 public class YamlConfig {
 
     private @Nullable String parentKeyName;
@@ -186,19 +186,6 @@ public class YamlConfig {
         return modifiedKeys;
     }
 
-    private void collectKeys(List<String> keys, Map<?, ?> map, boolean deep, StringBuilder keyPrefix) {
-
-        for (Map.Entry<?, ?> set : map.entrySet()) {
-            keys.add(keyPrefix + String.valueOf(set.getKey()) + ".");
-
-            if (deep && isObjectASectionMap(set.getValue())) {
-                collectKeys(keys, (Map<?, ?>) set.getValue(), deep, new StringBuilder(keyPrefix + String.valueOf(set.getKey()) + "."));
-            }
-
-        }
-
-    }
-
     public YamlConfig getSection(String key) {
         String[] sections = key.split("\\.");
         LinkedHashMap<String, Object> parent = yamlMap;
@@ -269,7 +256,14 @@ public class YamlConfig {
 
     public double getDouble(String key) {
         if (hasKey(key)) {
-            return get(key, 0.0D);
+            Object obj = get(key, 0.0D);
+            if(obj instanceof Integer objInt) {
+                return objInt.doubleValue();
+            }
+            if(obj instanceof Float objFloat) {
+                return objFloat.doubleValue();
+            }
+            return (Double) obj; // Double#valueOf will prevent Integer from casting to Double
         }
         throw new RuntimeException(String.format("Unable to find key '%s'.", key));
     }
@@ -597,6 +591,10 @@ public class YamlConfig {
                     }
 
                 }
+                else {
+                    // ignore other fields without an annotation
+                    continue;
+                }
 
                 field.set(object, value);
                 field.setAccessible(false);
@@ -773,12 +771,23 @@ public class YamlConfig {
 
     }
 
+    private void collectKeys(List<String> keys, Map<?, ?> map, boolean deep, StringBuilder keyPrefix) {
+
+        for (Map.Entry<?, ?> set : map.entrySet()) {
+            keys.add(keyPrefix + String.valueOf(set.getKey()) + ".");
+
+            if (deep && isObjectASectionMap(set.getValue())) {
+                collectKeys(keys, (Map<?, ?>) set.getValue(), deep, new StringBuilder(keyPrefix + String.valueOf(set.getKey()) + "."));
+            }
+
+        }
+
+    }
+
     /**
      * Used when parsing keys for YamlConfig loaders. This lets you ignore the default loading mechanism and insert your own object no automatically loadable by Yaml.
      */
-    public static interface Mapper {
-
-        UUID EMPTY = UUID.fromString("d03d0e68-6d68-4d5f-8f25-e599b58cadf5");
+    public interface Mapper {
 
         Object mapFrom(Object obj, String key, YamlConfig section);
 
