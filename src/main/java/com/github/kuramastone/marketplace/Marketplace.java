@@ -102,7 +102,7 @@ public final class Marketplace extends JavaPlugin {
         List<Material> validTypes = new ArrayList<>(new ArrayList<>(List.of(Material.values())).stream().filter(Material::isItem).toList());
         validTypes.removeIf(Material::isAir);
         getServer().getScheduler().runTaskTimer(this, () -> {
-            PlayerProfile profile = api.getOrCreateProfile(UUID.fromString("3ea0aa33-e7d6-4f28-b2d9-6075bd5c60dc"));
+            PlayerProfile profile = api.getOrCreateProfile(UUID.fromString("e885150d-8b7d-4830-a7ad-2024179da148"));
             ItemStack item = new ItemStack(validTypes.get(random.nextInt(validTypes.size())));
             api.addItemToMarketplace(new ItemEntry(profile, new ItemEntryData(profile.getUUID(), item, 100, System.currentTimeMillis())));
         }, 0L, 40L);

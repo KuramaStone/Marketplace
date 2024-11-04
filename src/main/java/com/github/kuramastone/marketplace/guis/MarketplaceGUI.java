@@ -101,7 +101,7 @@ public class MarketplaceGUI {
         List<ItemEntry> listEntries = new ArrayList<>(marketplaceStorage.getItemEntries());
 
         // sorted list of entries. Newest first
-        listEntries.sort((c1, c2) -> (int) Math.signum((int) (c1.getData().getListTime() - c2.getData().getListTime())));
+        listEntries.sort((c1, c2) -> (int) Math.signum((int) (c2.getData().getListTime() - c1.getData().getListTime())));
 
         List<Item> list = new ArrayList<>();
         for (ItemEntry itemEntry : listEntries) {

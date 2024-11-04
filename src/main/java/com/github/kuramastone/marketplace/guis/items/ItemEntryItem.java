@@ -79,10 +79,15 @@ public class ItemEntryItem extends SimpleItem {
 
             double price = itemEntry.getPrice(currentDiscount);
 
+            String sellerName = Bukkit.getOfflinePlayer(itemEntry.getData().getSellerUUID()).getName();
+            if(sellerName == null) {
+                sellerName = "Unknown Player";
+            }
+
             for (String line : Marketplace.instance.getAPI().getConfigOptions().marketplaceItemHeaders) {
                 header.add(ComponentEditor.decorateComponent(line
                         .replace("{amount}", "%s".formatted(numberFormat.format(price)))
-                        .replace("{seller}", Bukkit.getOfflinePlayer(itemEntry.getData().getSellerUUID()).getName())
+                        .replace("{seller}", sellerName)
                 ));
             }
 
