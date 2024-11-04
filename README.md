@@ -1,6 +1,6 @@
 # Markets
 
-**Market Trial** is a simple market manager. With thorough api, it is a a showcase and practice using MongoDB transactions to create a very secure market system that is easily expandable.
+**Market Trial** is a simple market manager or an auction house. With thorough api, it is a a showcase and practice using MongoDB transactions to create a very secure market system that is easily expandable.
 
 ## Features
 - **Completely Customizable**: Every message and GUI are 100% customizable.
@@ -11,13 +11,13 @@
 
 ### Command Structure
 - `/marketplace`  
-  *View items currently for sell. Permission: marketplace.view*
+  *View items currently for sell. **Permission:** marketplace.view*
   
 - `/blackmarket`  
-  *View blackmarket items currently for sell. Refreshes daily with content from the market. Permission: marketplace.blackmarket*
+  *View blackmarket items currently for sell. Refreshes daily with content from the market. **Permission:** marketplace.blackmarket*
 
 - `/sell [amount]`  
-  *List an item as for sell in the market. Permission: marketplace.sell*
+  *List an item as for sell in the market. **Permission:** marketplace.sell*
 
 - `/transactions`  
-  *View the transaction history of a player.*
+  *View the transaction history of a player.  **Permission:** marketplace.history*
