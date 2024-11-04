@@ -17,18 +17,22 @@ import xyz.xenondevs.invui.item.Item;
 import xyz.xenondevs.invui.item.builder.ItemBuilder;
 import xyz.xenondevs.invui.window.Window;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class MarketplaceGUI {
 
-    private MarketplaceAPI api;
-    private MarketplaceStorage marketplaceStorage;
-    private GuiConfig guiInfo;
+    private final MarketplaceAPI api;
+    private final GuiType guiType;
+    private final MarketplaceStorage marketplaceStorage;
+    private final GuiConfig guiInfo;
+    private @Nullable PagedGui<Item> gui;
 
-    public MarketplaceGUI(MarketplaceAPI api, MarketplaceStorage marketplaceStorage, GuiConfig guiInfo) {
+    public MarketplaceGUI(MarketplaceAPI api, GuiType guiType, MarketplaceStorage marketplaceStorage, GuiConfig guiInfo) {
         this.api = api;
+        this.guiType = guiType;
         this.marketplaceStorage = marketplaceStorage;
         this.guiInfo = guiInfo;
     }
@@ -51,13 +55,13 @@ public class MarketplaceGUI {
             String tag = ic.getTag();
 
 
-            if("BACK".equals(tag)) {
+            if ("BACK".equals(tag)) {
                 // use back page item
-                builder.addIngredient(c, new BackItem(new ItemBuilder(ic.toItemStack())));
+                builder.addIngredient(c, new BackItem(ic.toItemStack()));
             }
-            else if("NEXT".equals(tag)) {
+            else if ("NEXT".equals(tag)) {
                 // use back page item
-                builder.addIngredient(c, new ForwardItem(new ItemBuilder(ic.toItemStack())));
+                builder.addIngredient(c, new ForwardItem(ic.toItemStack()));
             }
             else {
                 // default to a plain item
@@ -67,17 +71,12 @@ public class MarketplaceGUI {
         }
 
         // load contents
-        List<Item> list = new ArrayList<>();
-        for (ItemEntry itemEntry : marketplaceStorage.getItemEntries()) {
-            list.add(new ItemEntryItem(marketplaceStorage, itemEntry, marketplaceStorage.getCurrentDiscount()));
-        }
-
         builder.addIngredient(guiInfo.getListCharacter(), Markers.CONTENT_LIST_SLOT_HORIZONTAL);
-        builder.setContent(list);
+        builder.setContent(createContentList());
 
-        PagedGui gui = builder.build();
+        this.gui = builder.build();
         gui.setPage(page);
-        api.getOrCreateProfile(player.getUniqueId()).setCurrentMarketGui(gui);
+        api.getOrCreateProfile(player.getUniqueId()).setCurrentMarketGui(this);
 
         Window window = Window.single()
                 .setViewer(player)
@@ -87,6 +86,29 @@ public class MarketplaceGUI {
 
         window.open();
 
+    }
+
+    @Nullable
+    public PagedGui<Item> getGui() {
+        return gui;
+    }
+
+    public GuiType getGuiType() {
+        return guiType;
+    }
+
+    public List<Item> createContentList() {
+        List<ItemEntry> listEntries = new ArrayList<>(marketplaceStorage.getItemEntries());
+
+        // sorted list of entries. Newest first
+        listEntries.sort((c1, c2) -> (int) Math.signum((int) (c1.getData().getListTime() - c2.getData().getListTime())));
+
+        List<Item> list = new ArrayList<>();
+        for (ItemEntry itemEntry : listEntries) {
+            list.add(new ItemEntryItem(marketplaceStorage, itemEntry, marketplaceStorage.getCurrentDiscount()));
+        }
+
+        return list;
     }
 
 }

@@ -7,6 +7,7 @@ import com.github.kuramastone.marketplace.guis.items.RunnableItem;
 import com.github.kuramastone.marketplace.player.PlayerProfile;
 import com.github.kuramastone.marketplace.storage.ItemEntry;
 import com.github.kuramastone.marketplace.storage.MarketplaceStorage;
+import com.github.kuramastone.marketplace.utils.PurchaseResult;
 import com.github.kuramastone.marketplace.utils.config.GuiConfig;
 import com.github.kuramastone.marketplace.utils.config.ItemConfig;
 import org.bukkit.entity.Player;
@@ -55,7 +56,6 @@ public class ConfirmationGUI {
             ItemConfig ic = set.getValue();
             String tag = ic.getTag();
 
-
             if ("ACCEPT".equals(tag)) {
                 // accept transaction on click
                 builder.addIngredient(c, new RunnableItem(new ItemWrapper(ic.toItemStack()), this::handleAccept));
@@ -90,8 +90,21 @@ public class ConfirmationGUI {
             return;
         locked = true;
 
-        api.handlePlayerPurchase(player, itemEntry, currentDiscount);
-        player.closeInventory(); //
+        PurchaseResult result = api.handlePlayerPurchase(player, itemEntry, currentDiscount);
+
+        if (result == PurchaseResult.SUCCESS) {
+            // return to previous gui
+            showPreviousPage(player);
+        }
+        else {
+            player.closeInventory();
+            if (result == PurchaseResult.ALREADY_BOUGHT)
+                player.sendMessage(api.getMessage("commands.already purchased").build());
+            else if (result == PurchaseResult.NOT_ENOUGH_MONEY)
+                player.sendMessage(api.getMessage("commands.not enough money").build());
+        }
+
+
     }
 
     private synchronized void handleDeny(ClickType clickType, Player player, InventoryClickEvent inventoryClickEvent) {
@@ -100,16 +113,20 @@ public class ConfirmationGUI {
         locked = true;
 
         // return to previous gui
+        showPreviousPage(player);
+    }
+
+    private void showPreviousPage(Player player) {
         PlayerProfile profile = api.getOrCreateProfile(player.getUniqueId());
-        Gui gui = profile.getCurrentMarketGui();
+        Gui gui = profile.getCurrentMarketGui().getGui();
         int page = 0;
         if (gui instanceof PagedGui<?>) {
             page = ((PagedGui<?>) gui).getCurrentPage();
         }
-        if (profile.getCurrentGuiType() == GuiType.MARKETPLACE) {
+        if (profile.getCurrentMarketGui().getGuiType() == GuiType.MARKETPLACE) {
             api.getGuiManager().showMarketplaceTo(player, page);
         }
-        else if (profile.getCurrentGuiType() == GuiType.BLACKMARKET) {
+        else if (profile.getCurrentMarketGui().getGuiType() == GuiType.BLACKMARKET) {
             api.getGuiManager().showBlackmarketTo(player, page);
         }
     }

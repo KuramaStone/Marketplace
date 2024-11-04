@@ -1,5 +1,6 @@
 package com.github.kuramastone.marketplace.guis.items;
 
+import org.bukkit.inventory.ItemStack;
 import xyz.xenondevs.invui.gui.PagedGui;
 import xyz.xenondevs.invui.item.ItemProvider;
 import xyz.xenondevs.invui.item.builder.ItemBuilder;
@@ -10,16 +11,17 @@ import xyz.xenondevs.invui.item.impl.controlitem.PageItem;
  */
 public class BackItem extends PageItem {
 
-    private ItemBuilder builder;
+    private ItemStack item;
 
-    public BackItem(ItemBuilder builder) {
+    public BackItem(ItemStack item) {
         super(false);
-        this.builder = builder;
+        this.item = item;
     }
 
     @Override
     public ItemProvider getItemProvider(PagedGui<?> gui) {
-        builder.setDisplayName("Previous page")
+        ItemBuilder builder = new ItemBuilder(item)
+                .setDisplayName("Previous page")
                 .addLoreLines(gui.hasPreviousPage()
                         ? "Go to page " + gui.getCurrentPage() + "/" + gui.getPageAmount()
                         : "You can't go further back");

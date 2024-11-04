@@ -20,6 +20,10 @@ public class MarketplaceCommand extends SubCommand<MarketplaceAPI> {
             sender.sendMessage(api.getMessage("commands.requires player").build());
             return true;
         }
+        if(getPermission() == null || !sender.hasPermission(getPermission())) {
+            sender.sendMessage(api.getMessage("commands.insufficient permissions").build());
+            return true;
+        }
 
         api.getGuiManager().showMarketplaceTo(player);
 

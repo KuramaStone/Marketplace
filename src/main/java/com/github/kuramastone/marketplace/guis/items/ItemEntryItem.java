@@ -5,6 +5,7 @@ import com.github.kuramastone.marketplace.Marketplace;
 import com.github.kuramastone.marketplace.storage.ItemEntry;
 import com.github.kuramastone.marketplace.storage.MarketplaceStorage;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -13,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 import xyz.xenondevs.invui.item.ItemProvider;
 import xyz.xenondevs.invui.item.impl.SimpleItem;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +23,8 @@ import java.util.List;
  * Represents an ItemEntry from {@link com.github.kuramastone.marketplace.storage.MarketplaceStorage} as a display item
  */
 public class ItemEntryItem extends SimpleItem {
+
+    private static final NumberFormat numberFormat = NumberFormat.getNumberInstance();
 
     private MarketplaceStorage marketplaceStorage;
     private ItemEntry itemEntry;
@@ -45,7 +50,7 @@ public class ItemEntryItem extends SimpleItem {
 
         if (itemEntry.getProfile().getUUID().equals(player.getUniqueId())) {
             // cant purchase your own items
-            //return;
+            return;
         }
 
         Marketplace.instance.getAPI()
@@ -73,8 +78,12 @@ public class ItemEntryItem extends SimpleItem {
             List<Component> fullLore = new ArrayList<>();
 
             double price = itemEntry.getPrice(currentDiscount);
+
             for (String line : Marketplace.instance.getAPI().getConfigOptions().marketplaceItemHeaders) {
-                header.add(ComponentEditor.decorateComponent(line.replace("{amount}", "%.2f".formatted(price))));
+                header.add(ComponentEditor.decorateComponent(line
+                        .replace("{amount}", "%s".formatted(numberFormat.format(price)))
+                        .replace("{seller}", Bukkit.getOfflinePlayer(itemEntry.getData().getSellerUUID()).getName())
+                ));
             }
 
             fullLore.addAll(header);

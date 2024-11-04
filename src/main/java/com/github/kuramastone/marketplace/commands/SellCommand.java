@@ -3,7 +3,10 @@ package com.github.kuramastone.marketplace.commands;
 import com.github.kuramastone.bUtilities.commands.SubCommand;
 import com.github.kuramastone.marketplace.MarketplaceAPI;
 import com.github.kuramastone.marketplace.player.PlayerProfile;
+import com.github.kuramastone.marketplace.player.TransactionEntry;
 import com.github.kuramastone.marketplace.storage.ItemEntry;
+import com.github.kuramastone.marketplace.storage.ItemEntryData;
+import com.github.kuramastone.marketplace.utils.ItemUtils;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -26,6 +29,10 @@ public class SellCommand extends SubCommand<MarketplaceAPI> {
             sender.sendMessage(api.getMessage("commands.requires player").build());
             return false;
         }
+        if (getPermission() == null || !sender.hasPermission(getPermission())) {
+            sender.sendMessage(api.getMessage("commands.insufficient permissions").build());
+            return true;
+        }
 
         if (args.length < getArgumentLocation() + 1) {
             sender.sendMessage("Usage: /%s [price]".formatted(getFullCommandString()));
@@ -38,11 +45,15 @@ public class SellCommand extends SubCommand<MarketplaceAPI> {
             price = Double.parseDouble(stringPrice);
         }
         catch (NumberFormatException e) {
-            // handle during check later
+            sender.sendMessage(api.getMessage("commands.invalid number", "{value}", price).build());
+            return false;
         }
 
+        // round price to the floor of its penny
+        price = Math.floor(price * 100) / 100.0D;
+
         if (price <= 0) {
-            sender.sendMessage(api.getMessage("commands.sell.failure.invalid price").build());
+            sender.sendMessage(api.getMessage("commands.sell.failure.invalid price", "{amount}", price).build());
             return false;
         }
 
@@ -53,33 +64,19 @@ public class SellCommand extends SubCommand<MarketplaceAPI> {
         }
 
         PlayerProfile profile = api.getOrCreateProfile(player.getUniqueId());
-        ItemEntry itemEntry = new ItemEntry(profile, itemstack, price);
-        api.addItemToMarketplace(profile, itemEntry);
+        player.getInventory().remove(itemstack);
+
+        long listTime = System.currentTimeMillis();
+        ItemEntry itemEntry = new ItemEntry(profile, new ItemEntryData(profile.getUUID(), itemstack, price, listTime));
+        TransactionEntry te = profile.addNewTransaction(itemEntry, listTime); // add to player history
+        api.addItemToMarketplace(itemEntry);
 
         sender.sendMessage(api.getMessage("commands.sell.success",
-                "{name}", getItemStackName(itemstack),
+                "{name}", ItemUtils.getItemStackName(itemstack),
                 "{amount}", itemstack.getAmount()).build());
 
 
         return true;
-    }
-
-    /**
-     * Get the itemstacks displayName or formatted material name
-     *
-     * @param itemstack
-     * @return
-     */
-    private String getItemStackName(ItemStack itemstack) {
-        if (itemstack.hasItemMeta()) {
-            if (itemstack.getItemMeta().hasDisplayName()) {
-                String plainText = PlainTextComponentSerializer.plainText().serialize(itemstack.getItemMeta().displayName());
-                return plainText;
-            }
-        }
-
-        String name = itemstack.getType().toString().toLowerCase().replace("_", " ");
-        return StringUtils.capitaliseAllWords(name);
     }
 
     private ItemStack getItemFromHands(Player player) {

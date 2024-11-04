@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'com.gradleup.shadow' version '8.3.2'
+    id("io.papermc.paperweight.userdev") version "1.7.4"
 }
 
 group = 'com.github.kuramastone'
@@ -19,11 +20,13 @@ repositories {
     maven {
         url = "https://repo.xenondevs.xyz/releases"
     }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
     // paper
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.20.4-R0.1-SNAPSHOT")
 
     // yaml libraries
     compileOnly 'net.kyori:adventure-api:4.5.0'
@@ -36,6 +39,16 @@ dependencies {
     // gui manager
     implementation 'xyz.xenondevs.invui:invui:1.39'
 
+    // vault money manager
+    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
+
+    //mongo database
+    implementation 'org.mongodb:mongodb-driver-sync:5.2.0' // Check for the latest version
+
+    // apache http for discord webhook
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+
+    // testing
     testImplementation 'net.kyori:adventure-api:4.5.0'
     testImplementation 'net.kyori:adventure-text-serializer-plain:4.14.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
@@ -68,6 +81,10 @@ processResources {
     filesMatching('plugin.yml') {
         expand props
     }
+}
+
+tasks.assemble {
+    dependsOn(tasks.reobfJar)
 }
 
 shadowJar {

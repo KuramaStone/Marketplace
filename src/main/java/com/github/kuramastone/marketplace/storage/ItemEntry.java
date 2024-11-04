@@ -11,24 +11,12 @@ import java.util.UUID;
  */
 public class ItemEntry {
 
-    private final UUID uuid;
-
     private final PlayerProfile profile;
-    private final ItemStack itemstack;
-    private double originalPrice;
+    private final ItemEntryData entryData;
 
-    public ItemEntry(PlayerProfile profile, ItemStack itemstack, double originalPrice) {
+    public ItemEntry(PlayerProfile profile, ItemEntryData data) {
         this.profile = profile;
-        this.itemstack = itemstack;
-        this.originalPrice = originalPrice;
-        uuid = UUID.randomUUID();
-    }
-
-    public ItemEntry(UUID uuid, PlayerProfile profile, ItemStack itemstack, double originalPrice) {
-        this.uuid = uuid;
-        this.profile = profile;
-        this.itemstack = itemstack;
-        this.originalPrice = originalPrice;
+        entryData = data;
     }
 
     /**
@@ -40,17 +28,21 @@ public class ItemEntry {
 
 
     /**
-     * @return {@link ItemStack} stored in entry
+     * @return Clone of {@link ItemStack} stored in entry
      */
     public ItemStack getItemstack() {
-        return itemstack.clone();
+        return entryData.getItemstack();
     }
 
     /**
      * @return Asking price for this item by the player.
      */
     public double getOriginalPrice() {
-        return originalPrice;
+        return entryData.getOriginalPrice();
+    }
+
+    public double getPrice(double currentDiscount) {
+        return Math.max(0, (getOriginalPrice()) - (getOriginalPrice() * currentDiscount));
     }
 
     @Override
@@ -58,15 +50,15 @@ public class ItemEntry {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ItemEntry itemEntry = (ItemEntry) o;
-        return Double.compare(originalPrice, itemEntry.originalPrice) == 0 && Objects.equals(uuid, itemEntry.uuid) && Objects.equals(profile, itemEntry.profile) && Objects.equals(itemstack, itemEntry.itemstack);
+        return Objects.equals(profile, itemEntry.profile) && Objects.equals(entryData, itemEntry.entryData);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid, profile, itemstack, originalPrice);
+        return Objects.hash(profile, entryData);
     }
 
-    public double getPrice(double currentDiscount) {
-        return Math.max(0, (this.originalPrice) - (this.originalPrice * currentDiscount));
+    public ItemEntryData getData() {
+        return this.entryData;
     }
 }

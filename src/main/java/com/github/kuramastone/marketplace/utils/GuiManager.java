@@ -5,10 +5,12 @@ import com.github.kuramastone.marketplace.MarketplaceAPI;
 import com.github.kuramastone.marketplace.guis.ConfirmationGUI;
 import com.github.kuramastone.marketplace.guis.GuiType;
 import com.github.kuramastone.marketplace.guis.MarketplaceGUI;
+import com.github.kuramastone.marketplace.player.PlayerProfile;
 import com.github.kuramastone.marketplace.storage.ItemEntry;
 import com.github.kuramastone.marketplace.storage.MarketplaceStorage;
 import com.github.kuramastone.marketplace.utils.config.GuiConfig;
 import org.bukkit.entity.Player;
+import xyz.xenondevs.invui.gui.PagedGui;
 
 public class GuiManager {
 
@@ -31,8 +33,7 @@ public class GuiManager {
     }
 
     public void showMarketplaceTo(Player player, int page) {
-        api.getOrCreateProfile(player.getUniqueId()).setCurrentGuiType(GuiType.MARKETPLACE);
-        MarketplaceGUI gui = new MarketplaceGUI(api, api.getMarketplace(), marketplaceConfig);
+        MarketplaceGUI gui = new MarketplaceGUI(api, GuiType.MARKETPLACE, api.getMarketplace(), marketplaceConfig);
         gui.show(player, page);
     }
 
@@ -41,8 +42,7 @@ public class GuiManager {
     }
 
     public void showBlackmarketTo(Player player, int page) {
-        api.getOrCreateProfile(player.getUniqueId()).setCurrentGuiType(GuiType.BLACKMARKET);
-        MarketplaceGUI gui = new MarketplaceGUI(api, api.getBlackmarket(), blackmarketConfig);
+        MarketplaceGUI gui = new MarketplaceGUI(api, GuiType.BLACKMARKET, api.getBlackmarket(), blackmarketConfig);
         gui.show(player, page);
     }
 
@@ -62,4 +62,31 @@ public class GuiManager {
     public GuiConfig getConfirmationConfig() {
         return confirmationConfig;
     }
+
+    public void updateProfileMarket(PlayerProfile profile) {
+        MarketplaceGUI gui = profile.getCurrentMarketGui();
+        if (gui != null) {
+            if (gui.getGui() != null) {
+                gui.getGui().setContent(gui.createContentList());
+            }
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

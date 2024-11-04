@@ -1,10 +1,28 @@
+Database:
+  # Link to connect with
+  connection: "mongodb://localhost:27017"
+
+  # database to connect to
+  database name: "marketdatabase"
+
+  # Refresh rate in ticks
+  refresh rate: 60
+
+Discord:
+  webhook:
+    enabled: false
+    url: "https://discord.com/api/webhooks/12345/abcdef" #Example Webhook
+    avatarURL: null
+    username: "Marketplace Observer"
+    content: "{buyer} purchased [{material}]x{count} from the market. Sold by {seller} for ${price}."
+
 Markets:
   blackmarket:
     discount percentage: 50
     chance to use in blackmarket: 25
   items:
     header lore:
-      - "&e&l${amount}"
+      - "&2&lSold by &5&l{seller} &2for &2&l${amount}"
       - "&eClick to purchase!"
       - " "
 
@@ -39,11 +57,19 @@ guis:
       - "1 . . . . . . . 1"
       - "1 . . . . . . . 1"
       - "1 . . . . . . . 1"
-      - "1 1 1 1 1 1 1 1 1"
+      - "< 1 1 1 1 1 1 1 >"
     ingredients:
       '1':
         name: " "
         material: BLACK_STAINED_GLASS_PANE
+      '<':
+        tag: "BACK"
+        name: "&cPrevious Page"
+        material: REDSTONE_BLOCK
+      '>':
+        tag: "NEXT"
+        name: "&cNext Page"
+        material: EMERALD_BLOCK
   confirmation:
     window name: "&cClick To Confirm"
     structure:
@@ -72,28 +98,37 @@ messages:
   commands:
     insufficient permissions: "&cYou do not have permission to use this!"
     requires player: "&cOnly players can use this!"
+    already purchased: "&cSomeone bought this item faster than you."
+    not enough money: "&cYou lack sufficient funds to purchase this item."
+    invalid number: "&e{value} &cis not a number. Try again with a number."
 
-    sell:
+    sell: # Messages for the sell command
       description: "Add your current held item to the marketplace."
       success: "&2Your item &e[{name}&7x&e{amount}] &2has been listed on the market!"
       failure:
         invalid item: "&cThis item cannot be sold!"
         invalid price: "&cPrice of ${amount} is not permitted!"
 
-    marketplace:
+    marketplace: # Messages for the market command
       description: "View the marketplace."
       success: "&2Opening marketplace...!"
 
-    blackmarket:
+    blackmarket: # Messages for the blackmarket command
       description: "View the hidden underbelly of the marketplace... With dirt cheap prices!"
       success: "&7Opening marketplace...!"
 
-    transactions:
+    transactions: # Messages for the transaction command
       description: "View a player's transaction history."
+      failure:
+        no history: "&cNo history from player &e{name}&c!"
       success:
-        transaction_line: "  &7- &2{material}x{amount} sold for {amount}"
+        transaction_line:
+          sold: "  &7- &e{material}&2x&e{count} &2was sold for &e${sold_for_price} &2to &e{buyer}&2 at {buy_time}."
+          unsold: "  &7- &e{material}&2x&e{count} &2was listed for &e${list_price} at {for_sell_time}"
         full_format: |
-          =-=-=-=-=-=-=-=-=-=-=-=-=-=
+          &e=-=-=-=-=-=-=-=-=-=-=-=-=-=
+          &7&lHover to see ItemStack
+          &e=-=-=-=-=-=-=-=-=-=-=-=-=-=
           &e&n{player}'s History:
           {transaction_lines}
-          =-=-=-=-=-=-=-=-=-=-=-=-=-=
+          &e=-=-=-=-=-=-=-=-=-=-=-=-=-=

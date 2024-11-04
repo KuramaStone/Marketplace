@@ -18,14 +18,19 @@ public class ConfigOptions {
     public List<String> marketplaceItemHeaders;
     public double blackMarketDiscount;
     public double blackMarketUseRate;
+    public DatabaseConfig database;
+    public DiscordConfig discordConfig;
 
     public void loadConfig(MarketplaceAPI api, YamlConfig config) {
         loadMessages(config);
+        database = YamlConfig.loadFromYaml(new DatabaseConfig(), config.getSection("Database"));
+        discordConfig = YamlConfig.loadFromYaml(new DiscordConfig(), config.getSection("Discord"));
 
         marketplaceItemHeaders = config.getStringList("Markets.items.header lore");
 
         blackMarketDiscount = config.getDouble("Markets.blackmarket.discount percentage") / 100.0D;
         blackMarketUseRate = config.getDouble("Markets.blackmarket.chance to use in blackmarket") / 100.0D;
+
     }
 
     /**

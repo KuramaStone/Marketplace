@@ -1,6 +1,7 @@
 package com.github.kuramastone.marketplace.player;
 
 import com.github.kuramastone.marketplace.storage.ItemEntry;
+import com.github.kuramastone.marketplace.storage.ItemEntryData;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -10,7 +11,7 @@ import java.util.UUID;
  */
 public class TransactionEntry {
 
-    private final ItemEntry itemEntry; // item
+    private final ItemEntryData itemEntryData; // item
     private final double listPrice; // price the player listed this as
     private final long timeSubmitted; // time it was first sent to the market
 
@@ -18,20 +19,20 @@ public class TransactionEntry {
     private double purchasePrice; // price that it was bought at
     private long timePurchased; // time that it was bought
 
-    public TransactionEntry(ItemEntry itemEntry, double listPrice, long timeSubmitted) {
-        this.itemEntry = itemEntry;
+    public TransactionEntry(ItemEntryData itemEntryData, double listPrice, long timeSubmitted) {
+        this.itemEntryData = itemEntryData;
         this.listPrice = listPrice;
         this.timeSubmitted = timeSubmitted;
     }
 
-    public TransactionEntry(ItemEntry itemEntry, double listPrice) {
-        this.itemEntry = itemEntry;
+    public TransactionEntry(ItemEntryData itemEntryData, double listPrice) {
+        this.itemEntryData = itemEntryData;
         this.listPrice = listPrice;
         this.timeSubmitted = System.currentTimeMillis();
     }
 
-    public TransactionEntry(ItemEntry itemEntry, double listPrice, long timeSubmitted, UUID purchasedBy, double purchasePrice, long timePurchased) {
-        this.itemEntry = itemEntry;
+    public TransactionEntry(ItemEntryData itemEntryData, double listPrice, long timeSubmitted, UUID purchasedBy, double purchasePrice, long timePurchased) {
+        this.itemEntryData = itemEntryData;
         this.listPrice = listPrice;
         this.timeSubmitted = timeSubmitted;
         this.purchasedBy = purchasedBy;
@@ -39,8 +40,8 @@ public class TransactionEntry {
         this.timePurchased = timePurchased;
     }
 
-    public ItemEntry getItemEntry() {
-        return itemEntry;
+    public ItemEntryData getItemEntryData() {
+        return itemEntryData;
     }
 
     public double getListPrice() {
@@ -74,4 +75,9 @@ public class TransactionEntry {
     public void setTimePurchased(long timePurchased) {
         this.timePurchased = timePurchased;
     }
+
+    public boolean hasBeenSold() {
+        return this.purchasedBy != null;
+    }
+
 }

@@ -44,11 +44,7 @@ public class MarketplaceStorage {
         this.itemEntries = entries;
     }
 
-    /**
-     * Removes items not in this set
-     * @param itemEntries
-     */
-    public void filter(Set<ItemEntry> itemEntries) {
-        this.itemEntries = new HashSet<>(this.itemEntries.stream().filter(itemEntries::contains).toList());
+    public boolean remove(ItemEntry itemEntry) {
+        return this.itemEntries.remove(itemEntry);
     }
 }

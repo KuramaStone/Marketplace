@@ -3,6 +3,8 @@ version: ${version}
 main: com.github.kuramastone.marketplace.Marketplace
 api-version: '1.20'
 
+depend: [Vault]
+
 commands:
   marketplace:
     description: Open the marketplace
@@ -10,3 +12,5 @@ commands:
     description: Open the blackmarket
   sell:
     description: Sell your currently held item.
+  transactions:
+    description: See transactions of target player

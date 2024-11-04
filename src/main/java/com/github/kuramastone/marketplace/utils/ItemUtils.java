@@ -2,16 +2,39 @@ package com.github.kuramastone.marketplace.utils;
 
 import com.github.kuramastone.bUtilities.ComponentEditor;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.codehaus.plexus.util.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ItemUtils {
+
+    /**
+     * Get the itemstacks displayName or formatted material name
+     *
+     * @param itemstack
+     * @return
+     */
+    public static String getItemStackName(ItemStack itemstack) {
+        if (itemstack.hasItemMeta()) {
+            if (itemstack.getItemMeta().hasDisplayName()) {
+                String plainText = PlainTextComponentSerializer.plainText().serialize(itemstack.getItemMeta().displayName());
+                return plainText;
+            }
+        }
+
+        String name = itemstack.getType().toString().toLowerCase().replace("_", " ");
+        return StringUtils.capitaliseAllWords(name);
+    }
 
 
     public static void setLore(ItemStack item, List<String> lore) {
@@ -86,5 +109,19 @@ public class ItemUtils {
 
     public static boolean isLeaves(Material type) {
         return Tag.LEAVES.isTagged(type);
+    }
+
+    /**
+     * Places item in the player inventory, or drops it if their inventory is full
+     * @param player
+     * @param item
+     */
+    public static void giveOrDropItem(Player player, ItemStack item) {
+        HashMap<Integer, ItemStack> didntFit = player.getInventory().addItem(item);
+        if(!didntFit.isEmpty()) {
+            for (ItemStack extra : didntFit.values()) {
+                player.getWorld().dropItem(player.getLocation(), extra);
+            }
+        }
     }
 }
